@@ -55,3 +55,9 @@ class Item(db.model):
   )
   db.session.commit()
   return 'Item updated'
+
+ @app.route('items/<id>', methods=['DELETE'])
+ def delete_item(id):
+  db.session.query(Item).filter_by(id=id).delete()
+  db.session.commit()
+  return "item deleted"
