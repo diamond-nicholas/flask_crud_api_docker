@@ -1,4 +1,5 @@
 from distutils.log import debug
+import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -21,4 +22,20 @@ class Item(db.model):
   self.title = title
   self.content = content
 
-db.create_all()
+ db.create_all()
+
+# create endpoints
+
+ @app.route('/items/<db>', methods=['GET'])
+ def get_item(id):
+  item = Item.query.get(id)
+  del item.__dict__['_sa_instance_state']
+  return jsonify(item.__dict__)
+
+ @app.route('/items/', methods=['GET'])
+ def get_items():
+  items = []
+  for item in db.session.query(Item).all():
+   del item.__dict__['_sa_instance_state']
+   items.append(item.__dict__)
+  return json(items)
