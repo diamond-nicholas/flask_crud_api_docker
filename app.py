@@ -39,3 +39,19 @@ class Item(db.model):
    del item.__dict__['_sa_instance_state']
    items.append(item.__dict__)
   return json(items)
+
+ @app.route('/items', methods=['POST'])
+ def create_item():
+  body = request.get_json()
+  db.session.add(Item(body['title'], body['content']))
+  db.session.commit()
+  return 'Item created'
+
+ @app.route('/items/<id>', methods=['PUT'])
+ def update_item(id):
+  body = request.get_json()
+  db.session.query(Item).filter_by(id=id).update(
+   dict(title=body['title'], content=body['content'])
+  )
+  db.session.commit()
+  return 'Item updated'
